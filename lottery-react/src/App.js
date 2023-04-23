@@ -27,7 +27,7 @@ class App extends React.Component {
 
     lottery.events
       .RandomReceived({
-        fromBlock: 'pending',
+        fromBlock: 'latest',
       })
       .on('data', (event) => {
         console.log('New event:', event);
