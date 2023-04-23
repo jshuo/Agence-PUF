@@ -1,59 +1,122 @@
 import web3 from './web3';
 
-const address = '0x8DDB5D5F062C235A9eF6C65b789A3D3951134F0b';
+// const address = '0xBc00c7AB72819315463813fF77a8914e8Fa58540';
+const address = '0x30a8047d8dd605AEf9Fdf4a1a355CEBCe7301137';
 
 const abi = [
   {
-    constant: true,
     inputs: [],
-    name: 'manager',
-    outputs: [{ name: '', type: 'address' }],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function'
-  },
-  {
-    constant: false,
-    inputs: [],
-    name: 'pickWinner',
-    outputs: [],
-    payable: false,
     stateMutability: 'nonpayable',
-    type: 'function'
+    type: 'constructor',
+    signature: 'constructor',
   },
   {
-    constant: true,
+    inputs: [
+      { internalType: 'address', name: 'have', type: 'address' },
+      { internalType: 'address', name: 'want', type: 'address' },
+    ],
+    name: 'CanOnlyBeCalledByPrecompile',
+    type: 'error',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'requestId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'entropy',
+        type: 'uint256',
+      },
+    ],
+    name: 'RandomReceived',
+    type: 'event',
+    signature:
+      '0xd26ff88a1db9b3b7e9a6a7cd0abec5d2c8efce0a95a30bf024b29e7365f81f0d',
+  },
+  {
     inputs: [],
-    name: 'getPlayers',
-    outputs: [{ name: '', type: 'address[]' }],
-    payable: false,
+    name: 'currentEntropy',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
-    type: 'function'
+    type: 'function',
+    constant: true,
+    signature: '0x5dc8cf69',
   },
   {
-    constant: false,
+    inputs: [],
+    name: 'currentRequestId',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+    signature: '0x5ae2bfdb',
+  },
+  {
     inputs: [],
     name: 'enter',
     outputs: [],
-    payable: true,
     stateMutability: 'payable',
-    type: 'function'
+    type: 'function',
+    payable: true,
+    signature: '0xe97dcb62',
   },
   {
-    constant: true,
-    inputs: [{ name: '', type: 'uint256' }],
-    name: 'players',
-    outputs: [{ name: '', type: 'address' }],
-    payable: false,
-    stateMutability: 'view',
-    type: 'function'
+    inputs: [
+      { internalType: 'uint256', name: 'requestId', type: 'uint256' },
+      { internalType: 'uint256', name: 'entropy', type: 'uint256' },
+    ],
+    name: 'executeEntropy',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+    signature: '0x7c966b2f',
   },
   {
     inputs: [],
-    payable: false,
+    name: 'getPlayers',
+    outputs: [
+      { internalType: 'address payable[]', name: '', type: 'address[]' },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+    signature: '0x8b5b9ccc',
+  },
+  {
+    inputs: [],
+    name: 'manager',
+    outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+    signature: '0x481c6a75',
+  },
+  {
+    inputs: [],
+    name: 'pickWinner',
+    outputs: [],
     stateMutability: 'nonpayable',
-    type: 'constructor'
-  }
+    type: 'function',
+    signature: '0x5d495aea',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: 'players',
+    outputs: [{ internalType: 'address payable', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+    signature: '0xf71d96cb',
+  },
 ];
 
-export default new web3.eth.Contract(abi, address);
+const lottery = new web3.eth.Contract(abi, address);
+
+export default lottery;
+

@@ -1,26 +1,50 @@
-import React, { Component } from 'react';
-import './App.css';
+import React from 'react';
 import web3 from './web3';
 import lottery from './lottery';
 
-class App extends Component {
+class App extends React.Component {
   state = {
     manager: '',
     players: [],
     balance: '',
     value: '',
-    message: ''
+    message: '',
   };
+  componentDidMount() {
+    let manager, players, balance;
 
-  async componentDidMount() {
-    const manager = await lottery.methods.manager().call();
-    const players = await lottery.methods.getPlayers().call();
-    const balance = await web3.eth.getBalance(lottery.options.address);
+    lottery
+      .getPastEvents('RandomReceived', {
+        fromBlock: 0,
+        toBlock: 'latest',
+      })
+      .then((events) => {
+        console.log('Events:', events);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
 
-    this.setState({ manager, players, balance });
+    lottery.events
+      .RandomReceived({
+        fromBlock: 'pending',
+      })
+      .on('data', (event) => {
+        console.log('New event:', event);
+      })
+      .on('error', (error) => {
+        console.error('Error:', error);
+      });
+
+    setInterval(async () => {
+      manager = await lottery.methods.manager().call();
+      players = await lottery.methods.getPlayers().call();
+      balance = await web3.eth.getBalance(lottery.options.address);
+      this.setState({ manager, players, balance });
+    }, 5000);
   }
 
-  onSubmit = async event => {
+  onSubmit = async (event) => {
     event.preventDefault();
 
     const accounts = await web3.eth.getAccounts();
@@ -29,7 +53,7 @@ class App extends Component {
 
     await lottery.methods.enter().send({
       from: accounts[0],
-      value: web3.utils.toWei(this.state.value, 'ether')
+      value: web3.utils.toWei(this.state.value, 'ether'),
     });
 
     this.setState({ message: 'You have been entered!' });
@@ -41,7 +65,7 @@ class App extends Component {
     this.setState({ message: 'Waiting on transaction success...' });
 
     await lottery.methods.pickWinner().send({
-      from: accounts[0]
+      from: accounts[0],
     });
 
     this.setState({ message: 'A winner has been picked!' });
@@ -58,14 +82,13 @@ class App extends Component {
         </p>
 
         <hr />
-
         <form onSubmit={this.onSubmit}>
           <h4>Want to try your luck?</h4>
           <div>
             <label>Amount of ether to enter</label>
             <input
               value={this.state.value}
-              onChange={event => this.setState({ value: event.target.value })}
+              onChange={(event) => this.setState({ value: event.target.value })}
             />
           </div>
           <button>Enter</button>
@@ -83,5 +106,4 @@ class App extends Component {
     );
   }
 }
-
 export default App;

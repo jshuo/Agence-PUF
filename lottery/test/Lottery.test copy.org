@@ -1,13 +1,7 @@
 const assert = require('assert');
-const HDWalletProvider = require('@truffle/hdwallet-provider');
+const ganache = require('ganache-cli');
 const Web3 = require('web3');
-const provider = new HDWalletProvider(
-  'flip february broom truck razor guard enter rebuild click return impulse census imitate sense news cruise swift cat response view cover evoke raw time',
-  // remember to change this to your own phrase!
-  'https://sepolia.infura.io/v3/e9f62e559d264acca5fe498412c1d9b9'
-  // remember to change this to your own endpoint!
-);
-const web3 = new Web3(provider);
+const web3 = new Web3(ganache.provider());
 
 const { abi, evm } = require('../compile');
 
@@ -16,6 +10,7 @@ let accounts;
 
 beforeEach(async () => {
   accounts = await web3.eth.getAccounts();
+  console.log(JSON.stringify(abi));
 
   lottery = await new web3.eth.Contract(abi)
     .deploy({ data: evm.bytecode.object })
