@@ -47,7 +47,7 @@ class App extends React.Component {
     };
 
     // Subscribe to the event
-    const subscription = web3.eth.subscribe(eventType, options, eventCallback);
+   web3.eth.subscribe(eventType, options, eventCallback);
 
       
 
