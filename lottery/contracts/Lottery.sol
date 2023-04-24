@@ -1,43 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.9;
-
-abstract contract Context {
-    function _msgSender() internal view virtual returns (address) {
-        return msg.sender;
-    }
-
-    function _msgData() internal view virtual returns (bytes calldata) {
-        return msg.data;
-    }
-}
-
-
-abstract contract RandomConsumerBase is Context {
-    error CanOnlyBeCalledByPrecompile(address have, address want);
-
-    /**
-     * @dev Receives `entropy` for `requestId`.  Contract must override this function
-     *
-     * Returns null
-     */
-    function executeImpl(uint256 requestId, uint256 entropy) internal virtual;
-
-    /**
-     * @dev `executeEntropy` delegates the data to the `executeImpl`
-     *
-     * Returns null
-     */
-    function executeEntropy(uint256 requestId, uint256 entropy) external {
-        if (msg.sender != 0x0000000000000000000000000000000000000801) {
-            revert CanOnlyBeCalledByPrecompile(
-                msg.sender,
-                0x0000000000000000000000000000000000000801
-            );
-        }
-        executeImpl(requestId, entropy);
-    }
-}
+import "./RandomConsumerBase.sol";
 
 contract Lottery is RandomConsumerBase {
 
@@ -59,7 +23,7 @@ contract Lottery is RandomConsumerBase {
         }
         
         function random() private view returns (uint) {
-            return uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp, players)));
+            return uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, players)));
         }
         function pickWinner() public restricted {
             uint index = random() % players.length;
