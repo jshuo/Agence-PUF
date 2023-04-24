@@ -1,7 +1,7 @@
 import web3 from './web3';
 
 // const address = '0xBc00c7AB72819315463813fF77a8914e8Fa58540';
-const address = '0x30a8047d8dd605AEf9Fdf4a1a355CEBCe7301137';
+const address = '0x5a0A5Ba73f64D83842c52a7398eE414d14701f19';
 
 const abi = [
   {
@@ -115,8 +115,6 @@ const abi = [
     signature: '0xf71d96cb',
   },
 ];
-
 const lottery = new web3.eth.Contract(abi, address);
 
 export default lottery;
-

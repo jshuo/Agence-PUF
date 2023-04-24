@@ -47,8 +47,25 @@ h4 {
   text-align: center;
 }
 
+/* Add a subheading */
+h5{
+  font-size: 24px;
+  color: #333333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+form{
+  font-size: 24px;
+  color: #333333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+
 label {
   font-size: 24px; /* or any other value you prefer */
+  font-weight: bold;
   text-align: center;
 }
 
@@ -64,7 +81,7 @@ p {
 
 /* Add a call-to-action button */
 button {
-  display: inline-block;
+  display: block;
   padding: 20px 40px; /* increase padding to make the button bigger */
   font-size: 24px; /* increase font-size to make the text bigger */
   font-weight: bold;
@@ -73,7 +90,7 @@ button {
   background-color: #008CBA; /* change background color to blue */
   border-radius: 5px;
   text-decoration: none;
-  margin-top: 20px;
+  margin: auto;
 }
 
 

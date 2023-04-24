@@ -2,6 +2,7 @@ import React from 'react';
 import web3 from './web3';
 import lottery from './lottery';
 
+
 class App extends React.Component {
   state = {
     manager: '',
@@ -15,7 +16,7 @@ class App extends React.Component {
 
     lottery
       .getPastEvents('RandomReceived', {
-        fromBlock: 0,
+        fromBlock: "3345658",
         toBlock: 'latest',
       })
       .then((events) => {
@@ -25,16 +26,31 @@ class App extends React.Component {
         console.error('Error:', error);
       });
 
-    lottery.events
-      .allEvents({
-        fromBlock: 'latest',
-      })
-      .on('data', (event) => {
-        console.log('New event:', event);
-      })
-      .on('error', (error) => {
-        console.error('Error:', error);
-      });
+    // Type of event to listen for, in this case, logs (smart contract events)
+    const eventType = 'logs';
+
+    // Options (needed for the 'logs' event type)
+    const options = {
+      address: '0x5a0A5Ba73f64D83842c52a7398eE414d14701f19', // Replace with your smart contract address
+      topics: ['0xd26ff88a1db9b3b7e9a6a7cd0abec5d2c8efce0a95a30bf024b29e7365f81f0d'] // Replace with an array of topics if needed, or use [null] to listen for all events from the specified address
+    };
+
+    // Callback function to handle the event
+    const eventCallback = (error, result) => {
+      if (error) {
+        console.error('Error in subscription:', error);
+        return;
+      }
+
+      // Handle the result (in this case, the log data)
+      console.log('New event:', result.data);
+    };
+
+    // Subscribe to the event
+    const subscription = web3.eth.subscribe(eventType, options, eventCallback);
+
+      
+
 
     setInterval(async () => {
       manager = await lottery.methods.manager().call();
@@ -74,16 +90,19 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <h2>Lottery Contract</h2>
-        <p>
-          This contract is managed by {this.state.manager}. There are currently{' '}
+        <h2>Agence - SecuX PUF Demo</h2>
+        <h4>
+          This contract is managed by {this.state.manager}. 
+        </h4>
+        <h5>
+        There are currently{' '}
           {this.state.players.length} people entered, competing to win{' '}
           {web3.utils.fromWei(this.state.balance, 'ether')} ether!
-        </p>
+        </h5>
 
         <hr />
         <form onSubmit={this.onSubmit}>
-          <h4>Want to try your luck?</h4>
+          <h4>Place your bet</h4>
           <div>
             <label>Amount of ether to enter</label>
             <input
