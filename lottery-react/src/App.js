@@ -2,6 +2,16 @@ import React from 'react';
 import web3 from './web3';
 import lottery from './lottery';
 
+function extractHexToDecimal(hexString, startPosition) {
+  // extract remaining hex string from start position to end of string
+  const remainingHexString = hexString.substring(startPosition);
+  console.log(remainingHexString)
+
+  // convert hex string to decimal number
+  const decimalNumber = parseInt(remainingHexString, 16);
+
+  return decimalNumber;
+}
 
 class App extends React.Component {
   state = {
@@ -10,6 +20,7 @@ class App extends React.Component {
     balance: '',
     value: '',
     message: '',
+    randomNumber: ''
   };
   componentDidMount() {
     let manager, players, balance;
@@ -44,6 +55,10 @@ class App extends React.Component {
 
       // Handle the result (in this case, the log data)
       console.log('New event:', result.data);
+      const startPosition = 32*2+2+1; //including 0x
+
+      const decimalNumber = extractHexToDecimal(result.data, startPosition);
+      this.setState({ randomNumber: decimalNumber });
     };
 
     // Subscribe to the event
@@ -117,10 +132,11 @@ class App extends React.Component {
 
         <h4>Ready to pick a winner?</h4>
         <button onClick={this.onClick}>Pick a winner!</button>
-
+        <h1>{this.state.randomNumber}</h1>
         <hr />
 
         <h1>{this.state.message}</h1>
+
       </div>
     );
   }
