@@ -5,8 +5,11 @@ const { abi, evm } = require('./compile');
 const provider = new HDWalletProvider(
   'flip february broom truck razor guard enter rebuild click return impulse census imitate sense news cruise swift cat response view cover evoke raw time',
   // remember to change this to your own phrase!
-  'https://sepolia.infura.io/v3/e9f62e559d264acca5fe498412c1d9b9'
+  // 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about', 
+  // 'https://sepolia.infura.io/v3/e9f62e559d264acca5fe498412c1d9b9'
   // remember to change this to your own endpoint!
+  'https://takecopter.cloud.agence.network'
+  // 887
 );
 
 const web3 = new Web3(provider);

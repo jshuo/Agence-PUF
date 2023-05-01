@@ -42,7 +42,7 @@ class App extends React.Component {
 
     // Options (needed for the 'logs' event type)
     const options = {
-      address: '0x5a0A5Ba73f64D83842c52a7398eE414d14701f19', // Replace with your smart contract address
+      address: '0xdc04bAE7d32291cf0389370E25Db66162746ed2f', // Replace with your smart contract address
       topics: ['0xd26ff88a1db9b3b7e9a6a7cd0abec5d2c8efce0a95a30bf024b29e7365f81f0d'] // Replace with an array of topics if needed, or use [null] to listen for all events from the specified address
     };
 
@@ -106,6 +106,7 @@ class App extends React.Component {
     return (
       <div>
         <h2>Agence - SecuX PUF Demo</h2>
+        <h4> <a href="https://blockscout.takecopter.cloud.agence.network/address/0xfC10126E2F41cbB264BceEE6c6093133AA45f317/transactions">Agence EVM Explorer</a></h4>
         <h4>
           This contract is managed by {this.state.manager}. 
         </h4>

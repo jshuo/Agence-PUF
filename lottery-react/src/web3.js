@@ -12,13 +12,13 @@ if (typeof window !== "undefined" && typeof window.ethereum !== "undefined") {
   const httpProvider = new HDWalletProvider(
     'flip february broom truck razor guard enter rebuild click return impulse census imitate sense news cruise swift cat response view cover evoke raw time',
     // remember to change this to your own phrase!
-    'https://sepolia.infura.io/v3/e9f62e559d264acca5fe498412c1d9b9'
+    'https://takecopter.cloud.agence.network'
     // remember to change this to your own endpoint!
   );
 
   // Separate WebSocketProvider for subscriptions
   const wsProvider = new Web3.providers.WebsocketProvider(
-    'wss://sepolia.infura.io/ws/v3/e9f62e559d264acca5fe498412c1d9b9'
+    'wss://ws.takecopter.cloud.agence.network'
     // remember to change this to your own WebSocket endpoint!
   );
 

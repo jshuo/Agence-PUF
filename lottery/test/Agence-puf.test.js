@@ -3,7 +3,7 @@ const HDWalletProvider = require('@truffle/hdwallet-provider');
 const Web3 = require('web3');
 
 // const address = '0xBc00c7AB72819315463813fF77a8914e8Fa58540';
-const address = '0x5a0A5Ba73f64D83842c52a7398eE414d14701f19';
+const address = '0xdc04bAE7d32291cf0389370E25Db66162746ed2f';
 
 const abi = [
   {
@@ -119,25 +119,78 @@ const abi = [
 ];
 let lottery = ''
 
-const provider = new HDWalletProvider(
+const httpProvider = new HDWalletProvider(
   'flip february broom truck razor guard enter rebuild click return impulse census imitate sense news cruise swift cat response view cover evoke raw time',
   // remember to change this to your own phrase!
-  'https://sepolia.infura.io/v3/e9f62e559d264acca5fe498412c1d9b9'
+  // 'https://sepolia.infura.io/v3/e9f62e559d264acca5fe498412c1d9b9'
+  "https://takecopter.cloud.agence.network"
   // remember to change this to your own endpoint!
 );
-const web3 = new Web3(provider);
+
+  // Separate WebSocketProvider for subscriptions
+  const wsProvider = new Web3.providers.WebsocketProvider(
+    'wss://ws.takecopter.cloud.agence.network'
+    // remember to change this to your own WebSocket endpoint!
+  );
+
+  // Set the default provider for web3
+  const web3 = new Web3(httpProvider);
+
+  // Set the provider for subscriptions separately
+  web3.eth.subscribe = (type, options, callback) => {
+    const subscription = new Web3(wsProvider).eth.subscribe(type, options, callback);
+    return subscription;
+  };
+
+
+    // Type of event to listen for, in this case, logs (smart contract events)
+    const eventType = 'logs';
+
+    // Options (needed for the 'logs' event type)
+    const options = {
+      address: '0xdc04bAE7d32291cf0389370E25Db66162746ed2f', // Replace with your smart contract address
+      topics: ['0xd26ff88a1db9b3b7e9a6a7cd0abec5d2c8efce0a95a30bf024b29e7365f81f0d'] // Replace with an array of topics if needed, or use [null] to listen for all events from the specified address
+    };
+
+
+function extractHexToDecimal(hexString, startPosition) {
+  // extract remaining hex string from start position to end of string
+  const remainingHexString = hexString.substring(startPosition);
+  console.log(remainingHexString)
+
+  // convert hex string to decimal number
+  const decimalNumber = parseInt(remainingHexString, 16);
+
+  return decimalNumber;
+}
+// Callback function to handle the event
+const eventCallback = (error, result) => {
+  if (error) {
+    console.error('Error in subscription:', error);
+    return;
+  }
+
+  // Handle the result (in this case, the log data)
+  const startPosition = 32*2+2+1; //including 0x
+
+  const decimalNumber = extractHexToDecimal(result.data, startPosition);
+  console.log('Random Number is:', decimalNumber);
+};
+
 
 let accounts;
 
 beforeEach(async () => {
   accounts = await web3.eth.getAccounts();
   lottery = await new web3.eth.Contract(abi, address);
+     // Subscribe to the event
+  web3.eth.subscribe(eventType, options, eventCallback);
   // lottery = await new web3.eth.Contract(abi)
   //   .deploy({ data: evm.bytecode.object })
   //   .send({ from: accounts[0], gas: '1000000' });
 });
 describe('Lottery Contract', () => {
-  it('deploys ethereum contract', () => {
+  it('deploys agence contract', () => {
     assert.ok(lottery.options.address);
   });
 
@@ -158,20 +211,20 @@ describe('Lottery Contract', () => {
   it('allows multiple accounts to enter', async () => {
     await lottery.methods.enter().send({
       from: accounts[0],
-      value: web3.utils.toWei('0.015', 'ether'),
+      value: web3.utils.toWei('1.688', 'ether'),
     });
     await lottery.methods.enter().send({
       from: accounts[1],
-      value: web3.utils.toWei('0.006', 'ether'),
+      value: web3.utils.toWei('1.688888', 'ether'),
     });
 
     const players = await lottery.methods.getPlayers().call({
       from: accounts[0],
     });
     console.log(players)
-    // assert.equal(accounts[0], players[0]);
-    // assert.equal(accounts[1], players[1]);
-    // assert.equal(2, players.length);
+    assert.equal(accounts[0], players[0]);
+    assert.equal(accounts[1], players[1]);
+    assert.equal(2, players.length);
   });
 
   it('requires a minimum amount of ether to enter', async () => {
@@ -209,20 +262,28 @@ describe('Lottery Contract', () => {
     const difference = finalBalance - initialBalance;
     // assert(difference > web3.utils.toWei('1.8', 'ether'));
 
-    lottery
-    .getPastEvents('RandomReceived', {
-      fromBlock: "3345658",
-      toBlock: 'latest',
-    })
-    .then((events) => {
-      console.log('Events:', events[events.length-1].returnValues);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
+    // lottery
+    // .getPastEvents('RandomReceived', {
+    //   fromBlock: "3345658",
+    //   toBlock: 'latest',
+    // })
+    // .then((events) => {
+    //   // console.log('Events:', events[events.length-1].returnValues);
+    //   console.log('Events:', events);
+    // })
+    // .catch((error) => {
+    //   console.error('Error:', error);
+    // });
+
+    lottery.events.RandomReceived({
+      fromBlock: 0,
+      toBlock: 'latest'
+    }, (error, event) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(event);
+      }
     });
   });
 });
-afterEach((done) => {
-  // ...
-  done();
-})
