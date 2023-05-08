@@ -10,7 +10,7 @@ pragma solidity ^0.8.9;
 import "./RandomConsumerBase.sol";
 
 contract Lottery is RandomConsumerBase {
-    event RandomReceived(uint256 requestId, uint256 entropy);
+    event RandomReceived(uint256 requestId, uint256 entropy, address contractAddress);
     uint256 public currentRequestId = 0;
     uint256 public currentEntropy = 0;
     address public manager;
@@ -26,13 +26,19 @@ contract Lottery is RandomConsumerBase {
         players.push(payable(msg.sender));
     }
 
-    // function random() private view returns (uint) {
-    //     return uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, players)));
-    // }
+    function random() private view returns (uint) {
+        return uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, players)));
+    }
 
     function pickWinner() public restricted {
-        uint256 requestId = oracle.requestRandom(address(this)); // Call requestRandom from the Oracle contract
-        currentRequestId = requestId;
+            oracle.requestRandom(address(this));
+            // uint256 requestId = oracle.requestRandom(address(this));
+            // currentRequestId = random()+requestId;
+            // uint index = currentRequestId % players.length;
+            // players[index].transfer(address(this).balance);
+            // players = new address payable[](0);
+            // emit RandomReceived(currentRequestId, currentRequestId, address(this));
+
     }
 
     modifier restricted() {
@@ -46,10 +52,10 @@ contract Lottery is RandomConsumerBase {
 
     function executeImpl(uint256 requestId, uint256 entropy) internal virtual override {
         uint index = entropy % players.length;
-        players[index].transfer(address(this).balance);
+        players[index].transfer(address(this).balance-1);
         players = new address payable[](0);
         currentRequestId = requestId;
         currentEntropy = entropy;
-        emit RandomReceived(requestId, entropy);
+        emit RandomReceived(currentRequestId, entropy, address(this));
     }
 }

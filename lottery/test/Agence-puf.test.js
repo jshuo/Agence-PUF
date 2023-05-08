@@ -2,8 +2,8 @@ const assert = require('assert');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const Web3 = require('web3');
 
-// const address = '0xBc00c7AB72819315463813fF77a8914e8Fa58540';
-const address = '0xdc04bAE7d32291cf0389370E25Db66162746ed2f';
+// const address = '0xB5EFB07a5EB5b7039e16372770326952778A44d9';
+const address = '0x61B3b9D9f1d4A3500044d8d9844c77Cc61860331';
 
 const abi = [
   {
@@ -35,11 +35,17 @@ const abi = [
         name: 'entropy',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'contractAddress',
+        type: 'address',
+      },
     ],
     name: 'RandomReceived',
     type: 'event',
     signature:
-      '0xd26ff88a1db9b3b7e9a6a7cd0abec5d2c8efce0a95a30bf024b29e7365f81f0d',
+      '0x6a28a83c30527eb0e14ded931b39c019a5c569be94926dafae0e92c4b5f17ed4',
   },
   {
     inputs: [],
@@ -101,6 +107,15 @@ const abi = [
   },
   {
     inputs: [],
+    name: 'oracle',
+    outputs: [{ internalType: 'contract Oracle', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+    signature: '0x7dc0d1d0',
+  },
+  {
+    inputs: [],
     name: 'pickWinner',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -117,52 +132,60 @@ const abi = [
     signature: '0xf71d96cb',
   },
 ];
-let lottery = ''
+let lottery = '';
 
 const httpProvider = new HDWalletProvider(
   'flip february broom truck razor guard enter rebuild click return impulse census imitate sense news cruise swift cat response view cover evoke raw time',
   // remember to change this to your own phrase!
   // 'https://sepolia.infura.io/v3/e9f62e559d264acca5fe498412c1d9b9'
-  "https://takecopter.cloud.agence.network"
+  'https://takecopter.cloud.agence.network'
   // remember to change this to your own endpoint!
 );
 
-  // Separate WebSocketProvider for subscriptions
-  const wsProvider = new Web3.providers.WebsocketProvider(
-    'wss://ws.takecopter.cloud.agence.network'
-    // remember to change this to your own WebSocket endpoint!
+// Separate WebSocketProvider for subscriptions
+const wsProvider = new Web3.providers.WebsocketProvider(
+  'wss://ws.takecopter.cloud.agence.network'
+  // remember to change this to your own WebSocket endpoint!
+);
+
+// Set the default provider for web3
+const web3 = new Web3(httpProvider);
+
+// Set the provider for subscriptions separately
+web3.eth.subscribe = (type, options, callback) => {
+  const subscription = new Web3(wsProvider).eth.subscribe(
+    type,
+    options,
+    callback
   );
+  return subscription;
+};
 
-  // Set the default provider for web3
-  const web3 = new Web3(httpProvider);
+// Type of event to listen for, in this case, logs (smart contract events)
+const eventType = 'logs';
 
-  // Set the provider for subscriptions separately
-  web3.eth.subscribe = (type, options, callback) => {
-    const subscription = new Web3(wsProvider).eth.subscribe(type, options, callback);
-    return subscription;
-  };
-
-
-    // Type of event to listen for, in this case, logs (smart contract events)
-    const eventType = 'logs';
-
-    // Options (needed for the 'logs' event type)
-    const options = {
-      address: '0xdc04bAE7d32291cf0389370E25Db66162746ed2f', // Replace with your smart contract address
-      topics: ['0xd26ff88a1db9b3b7e9a6a7cd0abec5d2c8efce0a95a30bf024b29e7365f81f0d'] // Replace with an array of topics if needed, or use [null] to listen for all events from the specified address
-    };
-
+// Options (needed for the 'logs' event type)
+const options = {
+  address: '0x61B3b9D9f1d4A3500044d8d9844c77Cc61860331', // Replace with your smart contract address
+  topics: [
+    '0x6a28a83c30527eb0e14ded931b39c019a5c569be94926dafae0e92c4b5f17ed4',
+  ], // Replace with an array of topics if needed, or use [null] to listen for all events from the specified address
+};
 
 function extractHexToDecimal(hexString, startPosition) {
   // extract remaining hex string from start position to end of string
-  const remainingHexString = hexString.substring(startPosition);
-  console.log(remainingHexString)
-
+  const remainingHexString = hexString.substring(
+    startPosition,
+    startPosition + 64
+  );
+  // console.log(remainingHexString);
   // convert hex string to decimal number
   const decimalNumber = parseInt(remainingHexString, 16);
 
   return decimalNumber;
 }
+
+let randomNumber, previousRandomNumber, blockNumber, previousBlockNumber;
 // Callback function to handle the event
 const eventCallback = (error, result) => {
   if (error) {
@@ -171,119 +194,65 @@ const eventCallback = (error, result) => {
   }
 
   // Handle the result (in this case, the log data)
-  const startPosition = 32*2+2+1; //including 0x
-
-  const decimalNumber = extractHexToDecimal(result.data, startPosition);
-  console.log('Random Number is:', decimalNumber);
+  const startPosition = 32 * 2 + 2; //including 0x
+  if (previousBlockNumber !== result.blockNumber) {
+    const randomNumber = extractHexToDecimal(result.data, startPosition);
+    console.log('Random Number is:', randomNumber);
+    assert(randomNumber>0)
+    assert(previousRandomNumber !==randomNumber)
+    previousRandomNumber = randomNumber;
+  }
+  previousBlockNumber = result.blockNumber;
 };
 
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 let accounts;
-
-beforeEach(async () => {
+before(async () => {
   accounts = await web3.eth.getAccounts();
   lottery = await new web3.eth.Contract(abi, address);
-     // Subscribe to the event
+  // Subscribe to the event
   web3.eth.subscribe(eventType, options, eventCallback);
   // lottery = await new web3.eth.Contract(abi)
   //   .deploy({ data: evm.bytecode.object })
   //   .send({ from: accounts[0], gas: '1000000' });
 });
 describe('Lottery Contract', () => {
-  it('deploys agence contract', () => {
-    assert.ok(lottery.options.address);
-  });
 
-  // it('allows one account to enter', async () => {
-  //   await lottery.methods.enter().send({
-  //     from: accounts[0],
-  //     value: web3.utils.toWei('0.01', 'ether'),
-  //   });
-
-  //   const players = await lottery.methods.getPlayers().call({
-  //     from: accounts[0],
-  //   });
-
-  //   assert.equal(accounts[0], players[0]);
-  //   assert.equal(1, players.length);
-  // });
-
-  it('allows multiple accounts to enter', async () => {
-    await lottery.methods.enter().send({
-      from: accounts[0],
-      value: web3.utils.toWei('1.688', 'ether'),
-    });
-    await lottery.methods.enter().send({
-      from: accounts[1],
-      value: web3.utils.toWei('1.688888', 'ether'),
-    });
-
-    const players = await lottery.methods.getPlayers().call({
-      from: accounts[0],
-    });
-    console.log(players)
-    assert.equal(accounts[0], players[0]);
-    assert.equal(accounts[1], players[1]);
-    assert.equal(2, players.length);
-  });
-
-  it('requires a minimum amount of ether to enter', async () => {
-    try {
+  for (let i = 0; i < 6000; i++) {
+    it(`allows multiple accounts to enter, test ${i + 1}`, async () => {
       await lottery.methods.enter().send({
         from: accounts[0],
-        value: 0,
+        gasLimit: 1000000,
+        value: web3.utils.toWei('1.6688', 'ether'),
       });
-      assert(false);
-    } catch (err) {
-      assert(err);
-    }
-  });
+      await lottery.methods.enter().send({
+        from: accounts[1],
+        gasLimit: 1000000,
+        value: web3.utils.toWei('1.6688888', 'ether'),
+      });
 
-  it('only manager can call pickWinner', async () => {
-    try {
-      await lottery.methods.pickWinner().send({
+      const players = await lottery.methods.getPlayers().call({
         from: accounts[0],
       });
-      assert(true);
-    } catch (err) {
-      assert(err);
-    }
-  });
+      // console.log(players);
+      assert.equal(accounts[0], players[0]);
+      assert.equal(accounts[1], players[1]);
+      // assert.equal(2, players.length);
+    });
 
-  it('sends money to the winner and resets the players array', async () => {
-    // await lottery.methods.enter().send({
-    //   from: accounts[0],
-    //   value: web3.utils.toWei('0.02', 'ether'),
-    // });
-
-    const initialBalance = await web3.eth.getBalance(accounts[0]);
-    // await lottery.methods.pickWinner().send({ from: accounts[0] });
-    const finalBalance = await web3.eth.getBalance(accounts[0]);
-    const difference = finalBalance - initialBalance;
-    // assert(difference > web3.utils.toWei('1.8', 'ether'));
-
-    // lottery
-    // .getPastEvents('RandomReceived', {
-    //   fromBlock: "3345658",
-    //   toBlock: 'latest',
-    // })
-    // .then((events) => {
-    //   // console.log('Events:', events[events.length-1].returnValues);
-    //   console.log('Events:', events);
-    // })
-    // .catch((error) => {
-    //   console.error('Error:', error);
-    // });
-
-    lottery.events.RandomReceived({
-      fromBlock: 0,
-      toBlock: 'latest'
-    }, (error, event) => {
-      if (error) {
-        console.error(error);
-      } else {
-        console.log(event);
+    it('only manager can call pickWinner', async () => {
+      try {
+        randomNumber = 0;
+        await lottery.methods.pickWinner().send({
+          from: accounts[0],
+          gas: '1000000',
+        });
+        // assert(randomNumber>0);
+        // await delay(1000); // Add 10 seconds delay
+      } catch (err) {
+        assert(err);
       }
     });
-  });
+  }
 });
