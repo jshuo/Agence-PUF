@@ -67,7 +67,7 @@ class App extends React.Component {
         previousPUFEntropy = PUFEntropy;
     
         const MixedPUFEntropy = extractHexToDecimal(result.data, MixedPUFEntropyPosition);
-        this.setState({ randomNumber: PUFEntropy });
+        this.setState({ randomNumber: (PUFEntropy >>> 0).toString(2) });
         // eslint-disable-next-line
         previousMixedPUFEntropy = MixedPUFEntropy;
       }
