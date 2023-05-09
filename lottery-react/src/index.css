@@ -29,29 +29,36 @@ h1 {
   text-align: center;
 }
 
+/* Style the page heading */
+h6 {
+  font-size: 36px;
+  font-weight: bold;
+    color: #eaeaea;
+  text-align: center;
+  margin: 10px;
+}
 /* Add a subheading */
 h2 {
   font-size: 48px;
   font-weight: bold;
     color: #eaeaea;
-  margin-bottom: 20px;
+
   text-align: center;
 }
-
 /* Add a subheading */
 h4 {
   font-size: 36px;
   font-weight: bold;
     color: #eaeaea;
-  margin-bottom: 20px;
   text-align: center;
+  margin: 20px;
 }
 
 /* Add a subheading */
 h5{
   font-size: 36px;
   font-weight: bold;
-    color: #0f0000;
+    color: #eaeaea;
   margin-bottom: 20px;
   text-align: center;
 }

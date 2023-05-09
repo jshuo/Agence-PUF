@@ -125,20 +125,17 @@ class App extends React.Component {
           {web3.utils.fromWei(this.state.balance, 'ether')} HME(s)!
         </h4>
 
-        <h1>{this.state.randomNumber}</h1>
-        <hr />
+        <h6>{this.state.randomNumber}</h6>
+
         <form onSubmit={this.onSubmit}>
-          <h4>Place your bet   <input
+          <h5>Place your bet   <input
               value={this.state.value}
               onChange={(event) => this.setState({ value: event.target.value })}
-            /> <label>HME(s)</label><button class="my-button" >Enter</button> <button onClick={this.onClick}>Pick a winner!</button> </h4>
+            /> <label>HME(s)</label><button class="my-button" >Enter</button> <button onClick={this.onClick}>Pick a winner!</button> </h5>
           
         </form>
 
-        <hr />
-
         
-        <hr />
 
         <h1>{this.state.message}</h1>
 
