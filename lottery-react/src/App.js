@@ -119,34 +119,25 @@ class App extends React.Component {
     return (
       <div>
         <h2>Agence - SecuX PUF Demo</h2>
-        <h4> <a href="https://blockscout.takecopter.cloud.agence.network/address/0xfC10126E2F41cbB264BceEE6c6093133AA45f317/transactions">Agence EVM Explorer</a></h4>
         <h4>
-          This contract is managed by {this.state.manager}. 
-        </h4>
-        <h5>
-        There are currently{' '}
+          This contract is managed by {this.state.manager}.         There are currently{' '}
           {this.state.players.length} people entered, competing to win{' '}
-          {web3.utils.fromWei(this.state.balance, 'ether')} ether!
-        </h5>
+          {web3.utils.fromWei(this.state.balance, 'ether')} HME(s)!
+        </h4>
 
+        <h1>{this.state.randomNumber}</h1>
         <hr />
         <form onSubmit={this.onSubmit}>
-          <h4>Place your bet</h4>
-          <div>
-            <label>Amount of ether to enter</label>
-            <input
+          <h4>Place your bet   <input
               value={this.state.value}
               onChange={(event) => this.setState({ value: event.target.value })}
-            />
-          </div>
-          <button>Enter</button>
+            /> <label>HME(s)</label><button class="my-button" >Enter</button> <button onClick={this.onClick}>Pick a winner!</button> </h4>
+          
         </form>
 
         <hr />
 
-        <h4>Ready to pick a winner?</h4>
-        <button onClick={this.onClick}>Pick a winner!</button>
-        <h1>{this.state.randomNumber}</h1>
+        
         <hr />
 
         <h1>{this.state.message}</h1>

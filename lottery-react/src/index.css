@@ -7,7 +7,7 @@
 /* Set background color and image */
 body {
   background-color: #f6f6f6;
-  background-image: url('https://media.gettyimages.com/id/1198334973/zh/%E5%90%91%E9%87%8F/%E4%B8%8B%E8%B7%8C%E7%9A%84%E7%BE%8E%E5%85%83%E7%A5%A8%E6%93%9A%E7%84%A1%E7%B8%AB%E6%A8%A1%E5%BC%8F%E5%9C%A8%E7%99%BD%E8%89%B2%E8%83%8C%E6%99%AF.jpg?s=1024x1024&w=gi&k=20&c=ateZqB84DZ1AUo63TfkUptISdvPAXTknTY-NLHeJnrk=');
+  background-image: url('./puf3.jpeg');
   background-repeat: no-repeat;
   background-size: cover;
   font-family: 'Roboto', sans-serif;
@@ -24,7 +24,7 @@ body {
 h1 {
   font-size: 64px;
   font-weight: bold;
-  color: #333333;
+    color: #eaeaea;
   margin-bottom: 20px;
   text-align: center;
 }
@@ -33,7 +33,7 @@ h1 {
 h2 {
   font-size: 48px;
   font-weight: bold;
-  color: #333333;
+    color: #eaeaea;
   margin-bottom: 20px;
   text-align: center;
 }
@@ -42,22 +42,26 @@ h2 {
 h4 {
   font-size: 36px;
   font-weight: bold;
-  color: #333333;
+    color: #eaeaea;
   margin-bottom: 20px;
   text-align: center;
 }
 
 /* Add a subheading */
 h5{
-  font-size: 24px;
-  color: #333333;
+  font-size: 36px;
+  font-weight: bold;
+    color: #0f0000;
   margin-bottom: 20px;
   text-align: center;
 }
+input {
+  height: 36px;
+}
 
 form{
-  font-size: 24px;
-  color: #333333;
+  font-size: 36px;
+    color: #eaeaea;
   margin-bottom: 20px;
   text-align: center;
 }
@@ -74,14 +78,14 @@ label {
 p {
   font-size: 18px;
   line-height: 1.5;
-  color: #666666;
+  color: #eaeaea;
   margin-bottom: 20px;
   text-align: justify;
 }
 
-/* Add a call-to-action button */
+
 button {
-  display: block;
+
   padding: 20px 40px; /* increase padding to make the button bigger */
   font-size: 24px; /* increase font-size to make the text bigger */
   font-weight: bold;
@@ -101,5 +105,5 @@ code {
   background-color: #f9f9f9;
   padding: 5px;
   border-radius: 5px;
-  color: #333333;
+  color: #eaeaea;   
 }
