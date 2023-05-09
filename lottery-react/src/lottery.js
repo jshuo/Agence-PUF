@@ -1,7 +1,7 @@
 import web3 from './web3';
 
 // const address = '0xBc00c7AB72819315463813fF77a8914e8Fa58540';
-const address = '0x61B3b9D9f1d4A3500044d8d9844c77Cc61860331';
+const address = '0x8166faD5d5FA00C861d025088BcAa9405802aDa4';
 
 const abi = [
   {
@@ -30,20 +30,20 @@ const abi = [
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'entropy',
+        name: 'PUFentropy',
         type: 'uint256',
       },
       {
         indexed: false,
-        internalType: 'address',
-        name: 'contractAddress',
-        type: 'address',
+        internalType: 'uint256',
+        name: 'currentEntropy',
+        type: 'uint256',
       },
     ],
     name: 'RandomReceived',
     type: 'event',
     signature:
-      '0x6a28a83c30527eb0e14ded931b39c019a5c569be94926dafae0e92c4b5f17ed4',
+      '0xf6faf575d299d9dad4669d63e412bf6520ed4be07be3bfcb8355976dcdf93262',
   },
   {
     inputs: [],
@@ -128,6 +128,15 @@ const abi = [
     type: 'function',
     constant: true,
     signature: '0xf71d96cb',
+  },
+  {
+    inputs: [],
+    name: 'tempEntropy',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+    signature: '0x4d7d0db5',
   },
 ];
 const lottery = new web3.eth.Contract(abi, address);

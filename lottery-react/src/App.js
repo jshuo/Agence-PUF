@@ -32,8 +32,8 @@ class App extends React.Component {
 
     // Options (needed for the 'logs' event type)
     const options = {
-      address: '0x61B3b9D9f1d4A3500044d8d9844c77Cc61860331', // Replace with your smart contract address
-      topics: ['0x6a28a83c30527eb0e14ded931b39c019a5c569be94926dafae0e92c4b5f17ed4'] // Replace with an array of topics if needed, or use [null] to listen for all events from the specified address
+      address: '0x8166faD5d5FA00C861d025088BcAa9405802aDa4', // Replace with your smart contract address
+      topics: ['0xf6faf575d299d9dad4669d63e412bf6520ed4be07be3bfcb8355976dcdf93262'] // Replace with an array of topics if needed, or use [null] to listen for all events from the specified address
     };
 
     function extractHexToDecimal(hexString, startPosition) {
@@ -49,20 +49,27 @@ class App extends React.Component {
       return decimalNumber;
     }
     
-
+   
     // Callback function to handle the event
     const eventCallback = (error, result) => {
-      let previousBlockNumber;
+      let previousPUFEntropy, previousMixedPUFEntropy, previousBlockNumber;
       if (error) {
         console.error('Error in subscription:', error);
         return;
       }
     
       // Handle the result (in this case, the log data)
-      const startPosition = 32 * 2 + 2; //including 0x
+      const PUFEntropyPosition = 32 * 2 + 2; //including 0x
+      const MixedPUFEntropyPosition = 32 * 4+56 + 2; //including 0x
       if (previousBlockNumber !== result.blockNumber) {
-        const randomNumber = extractHexToDecimal(result.data, startPosition);
-        this.setState({ randomNumber: randomNumber });
+        const PUFEntropy = extractHexToDecimal(result.data, PUFEntropyPosition);
+        // eslint-disable-next-line
+        previousPUFEntropy = PUFEntropy;
+    
+        const MixedPUFEntropy = extractHexToDecimal(result.data, MixedPUFEntropyPosition);
+        this.setState({ randomNumber: PUFEntropy });
+        // eslint-disable-next-line
+        previousMixedPUFEntropy = MixedPUFEntropy;
       }
       previousBlockNumber = result.blockNumber;
     };

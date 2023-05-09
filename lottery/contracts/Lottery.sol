@@ -10,9 +10,10 @@ pragma solidity ^0.8.9;
 import "./RandomConsumerBase.sol";
 
 contract Lottery is RandomConsumerBase {
-    event RandomReceived(uint256 requestId, uint256 entropy, address contractAddress);
+    event RandomReceived(uint256 requestId, uint256 PUFentropy, uint256 currentEntropy);
     uint256 public currentRequestId = 0;
     uint256 public currentEntropy = 0;
+    uint256 public tempEntropy = 0;
     address public manager;
     address payable[] public players;
     Oracle public oracle = Oracle(0x0000000000000000000000000000000000000801); // Add Oracle contract address as a constant
@@ -27,7 +28,7 @@ contract Lottery is RandomConsumerBase {
     }
 
     function random() private view returns (uint) {
-        return uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, players)));
+        return uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, players, tempEntropy)));
     }
 
     function pickWinner() public restricted {
@@ -50,12 +51,14 @@ contract Lottery is RandomConsumerBase {
         return players;
     }
 
-    function executeImpl(uint256 requestId, uint256 entropy) internal virtual override {
-        uint index = entropy % players.length;
-        players[index].transfer(address(this).balance-1);
-        players = new address payable[](0);
+    function executeImpl(uint256 requestId, uint256 PUFentropy) internal virtual override {
+
         currentRequestId = requestId;
-        currentEntropy = entropy;
-        emit RandomReceived(currentRequestId, entropy, address(this));
+        tempEntropy = PUFentropy;
+        currentEntropy = random();
+        uint index = currentEntropy % players.length;
+        players[index].transfer(address(this).balance);
+        players = new address payable[](0);
+        emit RandomReceived(currentRequestId, PUFentropy, currentEntropy);
     }
 }

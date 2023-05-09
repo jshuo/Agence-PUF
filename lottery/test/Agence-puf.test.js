@@ -3,7 +3,7 @@ const HDWalletProvider = require('@truffle/hdwallet-provider');
 const Web3 = require('web3');
 
 // const address = '0xB5EFB07a5EB5b7039e16372770326952778A44d9';
-const address = '0x61B3b9D9f1d4A3500044d8d9844c77Cc61860331';
+const address = '0x8166faD5d5FA00C861d025088BcAa9405802aDa4';
 
 const abi = [
   {
@@ -32,20 +32,20 @@ const abi = [
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'entropy',
+        name: 'PUFentropy',
         type: 'uint256',
       },
       {
         indexed: false,
-        internalType: 'address',
-        name: 'contractAddress',
-        type: 'address',
+        internalType: 'uint256',
+        name: 'currentEntropy',
+        type: 'uint256',
       },
     ],
     name: 'RandomReceived',
     type: 'event',
     signature:
-      '0x6a28a83c30527eb0e14ded931b39c019a5c569be94926dafae0e92c4b5f17ed4',
+      '0xf6faf575d299d9dad4669d63e412bf6520ed4be07be3bfcb8355976dcdf93262',
   },
   {
     inputs: [],
@@ -131,6 +131,15 @@ const abi = [
     constant: true,
     signature: '0xf71d96cb',
   },
+  {
+    inputs: [],
+    name: 'tempEntropy',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+    signature: '0x4d7d0db5',
+  },
 ];
 let lottery = '';
 
@@ -166,9 +175,9 @@ const eventType = 'logs';
 
 // Options (needed for the 'logs' event type)
 const options = {
-  address: '0x61B3b9D9f1d4A3500044d8d9844c77Cc61860331', // Replace with your smart contract address
+  address: '0x8166faD5d5FA00C861d025088BcAa9405802aDa4', // Replace with your smart contract address
   topics: [
-    '0x6a28a83c30527eb0e14ded931b39c019a5c569be94926dafae0e92c4b5f17ed4',
+    '0xf6faf575d299d9dad4669d63e412bf6520ed4be07be3bfcb8355976dcdf93262',
   ], // Replace with an array of topics if needed, or use [null] to listen for all events from the specified address
 };
 
@@ -185,7 +194,7 @@ function extractHexToDecimal(hexString, startPosition) {
   return decimalNumber;
 }
 
-let randomNumber, previousRandomNumber, blockNumber, previousBlockNumber;
+let PUFEntropy, previousPUFEntropy, previousMixedPUFEntropy, blockNumber, previousBlockNumber;
 // Callback function to handle the event
 const eventCallback = (error, result) => {
   if (error) {
@@ -194,13 +203,19 @@ const eventCallback = (error, result) => {
   }
 
   // Handle the result (in this case, the log data)
-  const startPosition = 32 * 2 + 2; //including 0x
+  const PUFEntropyPosition = 32 * 2 + 2; //including 0x
+  const MixedPUFEntropyPosition = 32 * 4+56 + 2; //including 0x
   if (previousBlockNumber !== result.blockNumber) {
-    const randomNumber = extractHexToDecimal(result.data, startPosition);
-    console.log('Random Number is:', randomNumber);
-    assert(randomNumber>0)
-    assert(previousRandomNumber !==randomNumber)
-    previousRandomNumber = randomNumber;
+    const PUFEntropy = extractHexToDecimal(result.data, PUFEntropyPosition);
+    assert(PUFEntropy > 0);
+    assert(previousPUFEntropy !== PUFEntropy);
+    previousPUFEntropy = PUFEntropy;
+
+    const MixedPUFEntropy = extractHexToDecimal(result.data, MixedPUFEntropyPosition);
+    console.log('PUFEntropy is:', PUFEntropy, 'MixedPUFEntropy is:', MixedPUFEntropy);
+    assert(MixedPUFEntropy > 0);
+    assert(previousMixedPUFEntropy !== MixedPUFEntropy);
+    previousMixedPUFEntropy = MixedPUFEntropy;
   }
   previousBlockNumber = result.blockNumber;
 };
@@ -218,18 +233,17 @@ before(async () => {
   //   .send({ from: accounts[0], gas: '1000000' });
 });
 describe('Lottery Contract', () => {
-
   for (let i = 0; i < 6000; i++) {
     it(`allows multiple accounts to enter, test ${i + 1}`, async () => {
       await lottery.methods.enter().send({
         from: accounts[0],
-        gasLimit: 1000000,
-        value: web3.utils.toWei('1.6688', 'ether'),
+        gasLimit: 2000000,
+        value: web3.utils.toWei('2', 'ether'),
       });
       await lottery.methods.enter().send({
         from: accounts[1],
-        gasLimit: 1000000,
-        value: web3.utils.toWei('1.6688888', 'ether'),
+        gasLimit: 2000000,
+        value: web3.utils.toWei('2', 'ether'),
       });
 
       const players = await lottery.methods.getPlayers().call({
@@ -243,12 +257,12 @@ describe('Lottery Contract', () => {
 
     it('only manager can call pickWinner', async () => {
       try {
-        randomNumber = 0;
+        PUFEntropy = 0;
         await lottery.methods.pickWinner().send({
           from: accounts[0],
           gas: '1000000',
         });
-        // assert(randomNumber>0);
+        // assert(PUFEntropy>0);
         // await delay(1000); // Add 10 seconds delay
       } catch (err) {
         assert(err);
