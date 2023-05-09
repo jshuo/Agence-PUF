@@ -1,7 +1,7 @@
 import web3 from './web3';
 
 // const address = '0xBc00c7AB72819315463813fF77a8914e8Fa58540';
-const address = '0x5a0A5Ba73f64D83842c52a7398eE414d14701f19';
+const address = '0x61B3b9D9f1d4A3500044d8d9844c77Cc61860331';
 
 const abi = [
   {
@@ -33,11 +33,17 @@ const abi = [
         name: 'entropy',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'contractAddress',
+        type: 'address',
+      },
     ],
     name: 'RandomReceived',
     type: 'event',
     signature:
-      '0xd26ff88a1db9b3b7e9a6a7cd0abec5d2c8efce0a95a30bf024b29e7365f81f0d',
+      '0x6a28a83c30527eb0e14ded931b39c019a5c569be94926dafae0e92c4b5f17ed4',
   },
   {
     inputs: [],
@@ -96,6 +102,15 @@ const abi = [
     type: 'function',
     constant: true,
     signature: '0x481c6a75',
+  },
+  {
+    inputs: [],
+    name: 'oracle',
+    outputs: [{ internalType: 'contract Oracle', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+    signature: '0x7dc0d1d0',
   },
   {
     inputs: [],

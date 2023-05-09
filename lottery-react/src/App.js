@@ -2,16 +2,6 @@ import React from 'react';
 import web3 from './web3';
 import lottery from './lottery';
 
-function extractHexToDecimal(hexString, startPosition) {
-  // extract remaining hex string from start position to end of string
-  const remainingHexString = hexString.substring(startPosition);
-  console.log(remainingHexString)
-
-  // convert hex string to decimal number
-  const decimalNumber = parseInt(remainingHexString, 16);
-
-  return decimalNumber;
-}
 
 class App extends React.Component {
   state = {
@@ -42,23 +32,39 @@ class App extends React.Component {
 
     // Options (needed for the 'logs' event type)
     const options = {
-      address: '0xdc04bAE7d32291cf0389370E25Db66162746ed2f', // Replace with your smart contract address
-      topics: ['0xd26ff88a1db9b3b7e9a6a7cd0abec5d2c8efce0a95a30bf024b29e7365f81f0d'] // Replace with an array of topics if needed, or use [null] to listen for all events from the specified address
+      address: '0x61B3b9D9f1d4A3500044d8d9844c77Cc61860331', // Replace with your smart contract address
+      topics: ['0x6a28a83c30527eb0e14ded931b39c019a5c569be94926dafae0e92c4b5f17ed4'] // Replace with an array of topics if needed, or use [null] to listen for all events from the specified address
     };
+
+    function extractHexToDecimal(hexString, startPosition) {
+      // extract remaining hex string from start position to end of string
+      const remainingHexString = hexString.substring(
+        startPosition,
+        startPosition + 64
+      );
+      // console.log(remainingHexString);
+      // convert hex string to decimal number
+      const decimalNumber = parseInt(remainingHexString, 16);
+    
+      return decimalNumber;
+    }
+    
 
     // Callback function to handle the event
     const eventCallback = (error, result) => {
+      let previousBlockNumber;
       if (error) {
         console.error('Error in subscription:', error);
         return;
       }
-
+    
       // Handle the result (in this case, the log data)
-      console.log('New event:', result.data);
-      const startPosition = 32*2+2+1; //including 0x
-
-      const decimalNumber = extractHexToDecimal(result.data, startPosition);
-      this.setState({ randomNumber: decimalNumber });
+      const startPosition = 32 * 2 + 2; //including 0x
+      if (previousBlockNumber !== result.blockNumber) {
+        const randomNumber = extractHexToDecimal(result.data, startPosition);
+        this.setState({ randomNumber: randomNumber });
+      }
+      previousBlockNumber = result.blockNumber;
     };
 
     // Subscribe to the event
