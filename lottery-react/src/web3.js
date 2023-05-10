@@ -10,7 +10,7 @@ if (typeof window !== "undefined" && typeof window.ethereum !== "undefined") {
 } else {
   // We are on the server *OR* the user is not running metamask
   const httpProvider = new HDWalletProvider(
-    'flip february broom truck razor guard enter rebuild click return impulse census imitate sense news cruise swift cat response view cover evoke raw time',
+    'clock same voyage solar initial any cancel type draw brush roof sure desk discover ignore scrap gown shed save liberty senior lens onion south',
     // remember to change this to your own phrase!
     'https://takecopter.cloud.agence.network'
     // remember to change this to your own endpoint!
