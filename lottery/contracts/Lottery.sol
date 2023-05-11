@@ -28,7 +28,11 @@ contract Lottery is RandomConsumerBase {
     }
 
     function random() private view returns (uint) {
-        return uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, players, tempEntropy)));
+
+        bytes32 tempEntropyBytes = bytes32(tempEntropy);
+        bytes32 packedBytes = keccak256(abi.encodePacked(block.prevrandao, block.timestamp, players));
+        bytes32 result = tempEntropyBytes ^ packedBytes;
+        return uint(result);
     }
 
     function pickWinner() public restricted {

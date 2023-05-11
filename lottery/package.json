@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 0"
+    "test": "mocha --timeout 0", 
+    "test1": "mocha --timeout 0 test/Agence-puf-1.test.js",
+    "test2": "mocha --timeout 0 test/Agence-puf-2.test.js",
+    "test3": "mocha --timeout 0 test/Agence-puf-3.test.js",
+    "test4": "mocha --timeout 0 test/Agence-puf-4.test.js"  
   },
   "author": "",
   "license": "ISC",

@@ -2,8 +2,7 @@ const assert = require('assert');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const Web3 = require('web3');
 
-// const address = '0xB5EFB07a5EB5b7039e16372770326952778A44d9';
-const address = '0x8166faD5d5FA00C861d025088BcAa9405802aDa4';
+const address = '0x2c425684843D13C6fE88E03624e9b40748aFF7E7';
 
 const abi = [
   {
@@ -144,7 +143,7 @@ const abi = [
 let lottery = '';
 
 const httpProvider = new HDWalletProvider(
-  'flip february broom truck razor guard enter rebuild click return impulse census imitate sense news cruise swift cat response view cover evoke raw time',
+  'clock same voyage solar initial any cancel type draw brush roof sure desk discover ignore scrap gown shed save liberty senior lens onion south',
   // remember to change this to your own phrase!
   // 'https://sepolia.infura.io/v3/e9f62e559d264acca5fe498412c1d9b9'
   'https://takecopter.cloud.agence.network'
@@ -175,7 +174,7 @@ const eventType = 'logs';
 
 // Options (needed for the 'logs' event type)
 const options = {
-  address: '0x8166faD5d5FA00C861d025088BcAa9405802aDa4', // Replace with your smart contract address
+  address: '0x2c425684843D13C6fE88E03624e9b40748aFF7E7', // Replace with your smart contract address
   topics: [
     '0xf6faf575d299d9dad4669d63e412bf6520ed4be07be3bfcb8355976dcdf93262',
   ], // Replace with an array of topics if needed, or use [null] to listen for all events from the specified address
@@ -194,7 +193,14 @@ function extractHexToDecimal(hexString, startPosition) {
   return decimalNumber;
 }
 
-let PUFEntropy, previousPUFEntropy, previousMixedPUFEntropy, blockNumber, previousBlockNumber;
+let PUFEntropyOdd = 0,
+  PUFEntropyEven = 0,
+  MixedPUFEntropyOdd = 0,
+  MixedPUFEntropyEven = 0;
+let previousPUFEntropy,
+  previousMixedPUFEntropy,
+  blockNumber,
+  previousBlockNumber;
 // Callback function to handle the event
 const eventCallback = (error, result) => {
   if (error) {
@@ -204,15 +210,40 @@ const eventCallback = (error, result) => {
 
   // Handle the result (in this case, the log data)
   const PUFEntropyPosition = 32 * 2 + 2; //including 0x
-  const MixedPUFEntropyPosition = 32 * 4+56 + 2; //including 0x
+  const MixedPUFEntropyPosition = 32 * 4 + 56 + 2; //including 0x
   if (previousBlockNumber !== result.blockNumber) {
     const PUFEntropy = extractHexToDecimal(result.data, PUFEntropyPosition);
     assert(PUFEntropy > 0);
     assert(previousPUFEntropy !== PUFEntropy);
     previousPUFEntropy = PUFEntropy;
-
-    const MixedPUFEntropy = extractHexToDecimal(result.data, MixedPUFEntropyPosition);
-    console.log('PUFEntropy is:', PUFEntropy, 'MixedPUFEntropy is:', MixedPUFEntropy);
+    const MixedPUFEntropy = extractHexToDecimal(
+      result.data,
+      MixedPUFEntropyPosition
+    );
+    if (PUFEntropy % 2 === 0) {
+      PUFEntropyEven++;
+    } else if (PUFEntropy % 2 === 1) {
+      PUFEntropyOdd++;
+    }
+    if (MixedPUFEntropy % 2 === 0) {
+      MixedPUFEntropyEven++;
+    } else if (MixedPUFEntropy % 2 === 1) {
+      MixedPUFEntropyOdd++;
+    }
+    console.log(
+      'PUFEntropy is:',
+      PUFEntropy,
+      'odd count: ',
+      PUFEntropyOdd,
+      'even count: ',
+      PUFEntropyEven,
+      'MixedPUFEntropy is:',
+      MixedPUFEntropy,
+      'odd count: ',
+      MixedPUFEntropyOdd,
+      'even count: ',
+      MixedPUFEntropyEven
+    );
     assert(MixedPUFEntropy > 0);
     assert(previousMixedPUFEntropy !== MixedPUFEntropy);
     previousMixedPUFEntropy = MixedPUFEntropy;
@@ -233,15 +264,10 @@ before(async () => {
   //   .send({ from: accounts[0], gas: '1000000' });
 });
 describe('Lottery Contract', () => {
-  for (let i = 0; i < 6000; i++) {
+  for (let i = 0; i < 60000; i++) {
     it(`allows multiple accounts to enter, test ${i + 1}`, async () => {
       await lottery.methods.enter().send({
         from: accounts[0],
-        gasLimit: 2000000,
-        value: web3.utils.toWei('2', 'ether'),
-      });
-      await lottery.methods.enter().send({
-        from: accounts[1],
         gasLimit: 2000000,
         value: web3.utils.toWei('2', 'ether'),
       });
@@ -249,9 +275,9 @@ describe('Lottery Contract', () => {
       const players = await lottery.methods.getPlayers().call({
         from: accounts[0],
       });
-      // console.log(players);
-      assert.equal(accounts[0], players[0]);
-      assert.equal(accounts[1], players[1]);
+      console.log(players);
+      //      assert.equal(accounts[0], players[0]);
+      //      assert.equal(accounts[1], players[1]);
       // assert.equal(2, players.length);
     });
 

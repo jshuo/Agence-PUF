@@ -3,7 +3,7 @@ const Web3 = require('web3');
 const { abi, evm } = require('./compile');
 
 const provider = new HDWalletProvider(
-  'flip february broom truck razor guard enter rebuild click return impulse census imitate sense news cruise swift cat response view cover evoke raw time',
+  'sell want actress bring shoulder spoil fault among soccer clay wash solid daughter ritual people squeeze spare merry glide crater bulk piece ecology romance',
   // remember to change this to your own phrase!
   // 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about', 
   // 'https://sepolia.infura.io/v3/e9f62e559d264acca5fe498412c1d9b9'

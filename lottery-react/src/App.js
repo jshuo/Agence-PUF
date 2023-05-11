@@ -125,7 +125,7 @@ class App extends React.Component {
           {web3.utils.fromWei(this.state.balance, 'ether')} HME(s)!
         </h4>
 
-        <h6>{this.state.randomNumber}</h6>
+        <h6><a href="https://www.pufsecurity.com/" >PUF Entropy: </a>   {this.state.randomNumber}</h6>
 
         <form onSubmit={this.onSubmit}>
           <h5>Place your bet   <input
