@@ -28,12 +28,18 @@ contract Lottery is RandomConsumerBase {
     }
 
     function random() private view returns (uint) {
-        // TODOs should change encodePacked to XOR PUFEntropy with prevrandao, timestamp 
         return uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, players, tempEntropy)));
     }
 
     function pickWinner() public restricted {
             oracle.requestRandom(address(this));
+            // uint256 requestId = oracle.requestRandom(address(this));
+            // currentRequestId = random()+requestId;
+            // uint index = currentRequestId % players.length;
+            // players[index].transfer(address(this).balance);
+            // players = new address payable[](0);
+            // emit RandomReceived(currentRequestId, currentRequestId, address(this));
+
     }
 
     modifier restricted() {
