@@ -1,4 +1,26 @@
 #!/bin/bash
+
+#######################################################################################
+#
+#  Copyright (c) 2022-2023 PUFsecurity and/or its affiliates. All Rights Reserved.
+#
+#######################################################################################
+
+#######################################################################################
+#
+# File: get_info
+#
+#       API to get PUFsecurity FPGA boards's uid and publie key
+#
+# History:
+#
+# 2022/11/08  v1.1.0    First release
+# 2023/06/01  v1.2.0    Add flock protection
+#
+#######################################################################################
+
+
+
 echo "Content-type:application/json"
 echo
 
@@ -6,12 +28,12 @@ echo
 PUFS_UTIL_PATH=/home/root/projects/pufs_util
 
 PID=$$
-OUT_FILE=get_info_dummy
-# TMP_FILE=tmp_$PID.txt
-# LOCK_FILE=fpga.lock
+OUT_FILE=get_info_$PID.txt
+TMP_FILE=tmp_$PID.txt
+LOCK_FILE=fpga.lock
 
-# flock $LOCK_FILE $PUFS_UTIL_PATH/pufs_utility -R 1 -O $OUT_FILE > $TMP_FILE
-# rm $TMP_FILE
+flock $LOCK_FILE $PUFS_UTIL_PATH/pufs_utility -R 1 -O $OUT_FILE > $TMP_FILE
+rm $TMP_FILE
 cat $OUT_FILE
-# rm $OUT_FILE
+rm $OUT_FILE
 

@@ -1,4 +1,29 @@
 #!/bin/bash
+
+########################################################################################
+#
+#  Copyright (c) 2022-2023 PUFsecurity and/or its affiliates. All Rights Reserved.
+#
+#######################################################################################
+
+#######################################################################################
+#
+# File: get_random_2
+#
+#       API to get a x-byte random number and its signature from PUFsecurity' FPGA board.
+#       x : 1-65535
+#
+#       Example to get 65535 random bytes:
+#       http://172.16.1.132:8080/cgi-bin/get_random_2?65535
+#
+# History:
+#
+# 2022/11/08  v1.1.0    First release
+# 2023/06/01  v1.2.0    Add flock protection
+#
+#######################################################################################
+
+
 echo "Content-type:application/json"
 echo
 
