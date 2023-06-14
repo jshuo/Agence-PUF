@@ -1,27 +1,39 @@
-pragma solidity ^0.4.17;
+interface Oracle {
+    event RandomRequested(address indexed requester, uint256 indexed id);
+    event RandomIssued(uint256 indexed id, uint256 entropy);
+    function getEntropy(uint256 id) external view returns (address, uint256);
+    function requestRandom(address contractAddress) external returns (uint256);
+}
 
-contract Lottery {
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.9;
+import "./RandomConsumerBase.sol";
+
+contract Lottery is RandomConsumerBase {
+    event RandomReceived(uint256 requestId, uint256 PUFentropy, uint256 currentEntropy);
+    uint256 public currentRequestId = 0;
+    uint256 public currentEntropy = 0;
+    uint256 public tempEntropy = 0;
     address public manager;
-    address[] public players;
+    address payable[] public players;
+    Oracle public oracle = Oracle(0x0000000000000000000000000000000000000801); // Add Oracle contract address as a constant
 
-    function Lottery() public {
+    constructor() {
         manager = msg.sender;
     }
 
     function enter() public payable {
-        require(msg.value > .01 ether);
-
-        players.push(msg.sender);
+        require(msg.value > .005 ether);
+        players.push(payable(msg.sender));
     }
 
     function random() private view returns (uint) {
-        return uint(keccak256(block.difficulty, now, players));
+        // TODOs should change encodePacked to XOR PUFEntropy with prevrandao, timestamp 
+        return uint(keccak256(abi.encodePacked(block.prevrandao, block.timestamp, players, tempEntropy)));
     }
 
     function pickWinner() public restricted {
-        uint index = random() % players.length;
-        players[index].transfer(this.balance);
-        players = new address[](0);
+            oracle.requestRandom(address(this));
     }
 
     modifier restricted() {
@@ -29,7 +41,18 @@ contract Lottery {
         _;
     }
 
-    function getPlayers() public view returns (address[]) {
+    function getPlayers() public view returns (address payable[] memory) {
         return players;
+    }
+
+    function executeImpl(uint256 requestId, uint256 PUFentropy) internal virtual override {
+
+        currentRequestId = requestId;
+        tempEntropy = PUFentropy;
+        currentEntropy = random();
+        uint index = currentEntropy % players.length;
+        players[index].transfer(address(this).balance);
+        players = new address payable[](0);
+        emit RandomReceived(currentRequestId, PUFentropy, currentEntropy);
     }
 }

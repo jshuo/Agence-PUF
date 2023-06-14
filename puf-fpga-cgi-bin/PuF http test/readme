@@ -1,0 +1,2 @@
+1. Run `npm install` in terminal to setup environment.
+2. Make sure the folder's location is correct, then run `bash stable_test.sh` to start test.

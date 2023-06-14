@@ -1,0 +1,52 @@
+#!/bin/bash
+echo "Content-type:application/json"
+echo
+
+
+INPUT=${QUERY_STRING}
+echo "Random bytes input: $INPUT"
+
+
+
+if [$INPUT == ""]; then
+    RN_BYTE=8
+else
+    RN_BYTE=$INPUT
+fi
+
+PID=$$
+
+get_puf_vrf() {
+  # Execute commands
+  PUFS_UTIL_PATH=/home/root/projects/pufs_util
+
+
+  OUT_FILE=get_random_$PID.txt
+  TMP_FILE=tmp_$PID.txt # ??? 
+
+  $PUFS_UTIL_PATH/pufs_utility -R 2 -l $RN_BYTE -a ECDSAP256 -O $OUT_FILE > $TMP_FILE
+  rm $TMP_FILE # ???
+  cat $OUT_FILE
+  rm $OUT_FILE
+#   sleep 0.2 # this is to simulate get_puf_vrf processing time; remove this when running on puf fpga
+   # Remove lock file
+  rm "$lockfile"  
+}
+
+# Set path for lock file
+lockfile=puf-fpga.lock
+
+# Check if lock file exists
+if [ -f "$lockfile" ]; then
+  # If lock file exists, puf-fpga is currently locked for in use 
+  echo "locked-in-use PID: "$PID
+else
+  # If lock file does not exist, create it
+  touch "$lockfile"
+  # Execute function
+  echo "executing get_puf_vrf.."
+  { time get_puf_vrf 2; } 2>> get_puf_vrf_execution_time.txt
+  
+ 
+
+fi

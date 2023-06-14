@@ -1,5 +1,116 @@
+/* Reset default margin and padding */
+* {
+  margin: 150;
+  padding: 150;
+}
+
+/* Set background color and image */
 body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+  background-color: #f6f6f6;
+  background-image: url('./puf3.jpeg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Add padding to the page */
+.container {
+  padding: 150px;
+}
+
+/* Style the page heading */
+h1 {
+  font-size: 64px;
+  font-weight: bold;
+    color: #eaeaea;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Style the page heading */
+h6 {
+  font-size: 36px;
+  font-weight: bold;
+    color: #eaeaea;
+  text-align: center;
+  margin: 10px;
+}
+/* Add a subheading */
+h2 {
+  font-size: 48px;
+  font-weight: bold;
+    color: #eaeaea;
+
+  text-align: center;
+}
+/* Add a subheading */
+h4 {
+  font-size: 36px;
+  font-weight: bold;
+    color: #eaeaea;
+  text-align: center;
+  margin: 20px;
+}
+
+/* Add a subheading */
+h5{
+  font-size: 36px;
+  font-weight: bold;
+    color: #eaeaea;
+  margin-bottom: 20px;
+  text-align: center;
+}
+input {
+  height: 36px;
+}
+
+form{
+  font-size: 36px;
+    color: #eaeaea;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+
+label {
+  font-size: 24px; /* or any other value you prefer */
+  font-weight: bold;
+  text-align: center;
+}
+
+
+/* Style paragraphs */
+p {
+  font-size: 18px;
+  line-height: 1.5;
+  color: #eaeaea;
+  margin-bottom: 20px;
+  text-align: justify;
+}
+
+
+button {
+
+  padding: 20px 40px; /* increase padding to make the button bigger */
+  font-size: 24px; /* increase font-size to make the text bigger */
+  font-weight: bold;
+  text-align: center;
+  color: #ffffff;
+  background-color: #008CBA; /* change background color to blue */
+  border-radius: 5px;
+  text-decoration: none;
+  margin: auto;
+}
+
+
+/* Style code blocks */
+code {
+  font-family: 'Source Code Pro', Menlo, Monaco, Consolas, 'Courier New', monospace;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  padding: 5px;
+  border-radius: 5px;
+  color: #eaeaea;   
 }

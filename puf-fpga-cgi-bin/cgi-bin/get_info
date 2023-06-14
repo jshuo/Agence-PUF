@@ -1,0 +1,17 @@
+#!/bin/bash
+echo "Content-type:application/json"
+echo
+
+# PUFS utility path
+PUFS_UTIL_PATH=/home/root/projects/pufs_util
+
+PID=$$
+OUT_FILE=get_info_dummy
+# TMP_FILE=tmp_$PID.txt
+# LOCK_FILE=fpga.lock
+
+# flock $LOCK_FILE $PUFS_UTIL_PATH/pufs_utility -R 1 -O $OUT_FILE > $TMP_FILE
+# rm $TMP_FILE
+cat $OUT_FILE
+# rm $OUT_FILE
+

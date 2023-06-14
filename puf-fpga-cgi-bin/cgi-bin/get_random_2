@@ -1,0 +1,27 @@
+#!/bin/bash
+echo "Content-type:application/json"
+echo
+
+
+INPUT=${QUERY_STRING}
+echo "Random bytes input: $INPUT"
+
+if [$INPUT == ""]; then
+    RN_BYTE=8
+else
+    RN_BYTE=$INPUT
+fi
+
+
+# PUFS utility path
+PUFS_UTIL_PATH=/home/root/projects/pufs_util
+
+PID=$$
+OUT_FILE=get_random_$PID.txt
+TMP_FILE=tmp_$PID.txt
+LOCK_FILE=fpga.lock
+
+flock $LOCK_FILE $PUFS_UTIL_PATH/pufs_utility -R 2 -l $RN_BYTE -a ECDSAP256 -O $OUT_FILE > $TMP_FILE
+rm $TMP_FILE
+cat $OUT_FILE
+rm $OUT_FILE
