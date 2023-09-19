@@ -117,21 +117,30 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <h2>Agence - SecuX PUF Demo</h2>
+      <div className='bg'>
+        <h2> Agence - SecuX PUF Demo</h2>
+        <div>
         <h4>
-          This contract is managed by {this.state.manager}.         There are currently{' '}
+          This contract is managed by: {this.state.manager}.  
+          </h4></div>     
+        <div>
+        <h4>
+          There are currently{' '}
           {this.state.players.length} people entered, competing to win{' '}
           {web3.utils.fromWei(this.state.balance, 'ether')} HME(s)!
-        </h4>
+        </h4></div>  
 
-        <h6><a href="https://www.pufsecurity.com/" >PUF Entropy: </a>   {this.state.randomNumber}</h6>
+        <h6><a href="https://www.pufsecurity.com/" >PUF Entropy:</a>   {this.state.randomNumber}</h6>
 
         <form onSubmit={this.onSubmit}>
-          <h5>Place your bet   <input
+          <h5>
+            <div>{"> Please your bet"}</div>
+            <input
               value={this.state.value}
               onChange={(event) => this.setState({ value: event.target.value })}
-            /> <label>HME(s)</label><button class="my-button" >Enter</button> <button onClick={this.onClick}>Pick a winner!</button> </h5>
+            /> 
+            <label>{' 💰HME(s) '}</label><button class="my-button" >Enter</button> <button onClick={this.onClick}>Pick a winner!</button> 
+          </h5>
           
         </form>
 
